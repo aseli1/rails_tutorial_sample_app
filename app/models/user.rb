@@ -1,4 +1,5 @@
 class User < ApplicationRecord
+  has_many :microposts, dependent: :destroy
   attr_accessor :remember_token, :activation_token, :reset_token
   attr_accessor :remember_token, :activation_token
 
@@ -50,7 +51,13 @@ class User < ApplicationRecord
     UserMailer.password_reset(self).deliver_now
   end
 
-  # Returns the hash digest of the given string.
+  # Defines a proto-feed.
+  # See "Following users" for the full implementation.
+  def feed
+    Micropost.where("user_id = ?", id)
+  end
+  
+
   class << self
     # Returns the hash digest of the given string.
     def digest(string)
